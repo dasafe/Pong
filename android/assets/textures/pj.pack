@@ -1,0 +1,46 @@
+villager.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+espalda0
+    rotate: false
+    xy: 18, 1
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: -1
+espalda
+    rotate: false
+    xy: 18, 16
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: 0
+espalda
+    rotate: false
+    xy: 18, 1
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: 1
+cara0
+    rotate: false
+    xy: 2, 1
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: -1
+cara
+    rotate: false
+    xy: 2, 16
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: 0
+cara
+    rotate: false
+    xy: 2, 21
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: 1
