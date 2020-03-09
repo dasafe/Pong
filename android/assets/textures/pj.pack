@@ -15,14 +15,14 @@ espalda
     size: 11, 15
     orig: 11, 15
     offset: 0, 0
-    index: 0
+    index: 1
 espalda
     rotate: false
-    xy: 18, 1
+    xy: 18, 32
     size: 11, 15
     orig: 11, 15
     offset: 0, 0
-    index: 1
+    index: 2
 cara0
     rotate: false
     xy: 2, 1
@@ -32,15 +32,15 @@ cara0
     index: -1
 cara
     rotate: false
-    xy: 2, 16
-    size: 11, 15
-    orig: 11, 15
-    offset: 0, 0
-    index: 0
-cara
-    rotate: false
-    xy: 2, 21
+    xy: 2, 17
     size: 11, 15
     orig: 11, 15
     offset: 0, 0
     index: 1
+cara
+    rotate: false
+    xy: 2, 33
+    size: 11, 15
+    orig: 11, 15
+    offset: 0, 0
+    index: 2

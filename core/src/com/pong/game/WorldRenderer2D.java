@@ -1,6 +1,7 @@
 package com.pong.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,9 +23,8 @@ public class WorldRenderer2D {
     private World world;
     private TextureAtlas atlas;
     private TextureAtlas pj;
-    private TextureRegion espalda;
+    private TextureRegion animacion;
     private TextureRegion espalda0;
-    private TextureRegion cara;
     private TextureRegion cara0;
     private TextureRegion wallImage;
     private TextureRegion exitImage;
@@ -39,14 +39,16 @@ public class WorldRenderer2D {
     private SpriteBatch hudBatch;
     private ShapeRenderer debugShapes;
     private BitmapFont hudFont;
+    private int posicion;
 
     public WorldRenderer2D(World world) {
         this.world = world;
         atlas = new TextureAtlas(Gdx.files.internal("textures/images.pack"));
         pj = new TextureAtlas(Gdx.files.internal("textures/pj.pack"));
         espalda0 = pj.findRegion("espalda0");
-        espaldaAnimation = new Animation<TextureRegion>(6f, pj.findRegions("espalda"), Animation.PlayMode.LOOP);
         cara0 = pj.findRegion("cara0");
+        caraAnimation = new Animation<TextureRegion>(20f, pj.findRegions("cara"), Animation.PlayMode.LOOP);
+        espaldaAnimation = new Animation<TextureRegion>(20f, pj.findRegions("espalda"), Animation.PlayMode.LOOP);
 
         wallImage = atlas.findRegion("wall");
         exitImage = atlas.findRegion("exit");
@@ -71,7 +73,6 @@ public class WorldRenderer2D {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderPlayArea();
         renderHud();
-        if (ArenaRoamer.DEBUG) renderDebug();
     }
 
     private void renderPlayArea() {
@@ -100,9 +101,22 @@ public class WorldRenderer2D {
         for (int i = 0; i < world.getKeys().size; i++)
             batch.draw(keyImage, (world.getKeys().get(i).centrePosX * PX_PER_M) - ((world.getKeys().get(i).width * PX_PER_M) / 2), (world.getKeys().get(i).centrePosY * PX_PER_M) - ((world.getKeys().get(i).height * PX_PER_M) / 2), (world.getKeys().get(i).width * PX_PER_M) / 2, (world.getKeys().get(i).height * PX_PER_M) / 2, world.getKeys().get(i).width * PX_PER_M, world.getKeys().get(i).height * PX_PER_M, 1, 1, 0);
 
-        caraAnimation = new Animation<TextureRegion>(20f, pj.findRegions("espalda"), Animation.PlayMode.LOOP);
-        espalda0 = new Sprite(caraAnimation.getKeyFrame(stateTime,true));
-        batch.draw(espalda0, (world.getPlayer().getCentrePos().x * PX_PER_M) - ((world.getPlayer().getWidth() * PX_PER_M) / 2), (world.getPlayer().getCentrePos().y * PX_PER_M) - ((world.getPlayer().getDepth() * PX_PER_M) / 2), (world.getPlayer().getWidth() * PX_PER_M) / 2, (world.getPlayer().getDepth() * PX_PER_M) / 2, world.getPlayer().getWidth() * PX_PER_M, world.getPlayer().getDepth() * PX_PER_M, 1, 1, world.getPlayer().getRotation());
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+            animacion = new Sprite(espaldaAnimation.getKeyFrame(stateTime,true));
+            posicion = 1;
+        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            animacion = new Sprite(caraAnimation.getKeyFrame(stateTime,true));
+            posicion = -1;
+        }else {
+            if (posicion == -1){
+                animacion = cara0;
+            }else {
+                animacion = espalda0;
+            }
+
+        }
+
+        batch.draw(animacion, (world.getPlayer().getCentrePos().x * PX_PER_M) - ((world.getPlayer().getWidth() * PX_PER_M) / 2), (world.getPlayer().getCentrePos().y * PX_PER_M) - ((world.getPlayer().getDepth() * PX_PER_M) / 2), (world.getPlayer().getWidth() * PX_PER_M) / 2, (world.getPlayer().getDepth() * PX_PER_M) / 2, world.getPlayer().getWidth() * PX_PER_M, world.getPlayer().getDepth() * PX_PER_M, 1, 1, world.getPlayer().getRotation());
         batch.end();
     }
 
@@ -113,21 +127,10 @@ public class WorldRenderer2D {
         hudBatch.setProjectionMatrix(hudCam.combined);
         hudBatch.begin();
         hudFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        hudFont.draw(hudBatch, "Level: " + world.getLevel(), 15, 305);
-        hudFont.draw(hudBatch, "Keys Held: " + world.getInventoryKeys(), 15, 275);
-        hudFont.draw(hudBatch, "Remaining Gems: " + world.getGems().size, 15, 260);
-        hudFont.draw(hudBatch, "Remaining Keys: " + world.getKeys().size, 15, 245);
+        hudFont.draw(hudBatch, "Nivel: " + world.getLevel(), 15, 305);
+        hudFont.draw(hudBatch, "Llaves: " + world.getInventoryKeys(), 15, 275);
+        hudFont.draw(hudBatch, "Tesoros restantes: " + world.getGems().size, 15, 260);
+        hudFont.draw(hudBatch, "Llaves restantes: " + world.getKeys().size, 15, 245);
         hudBatch.end();
-    }
-
-    private void renderDebug() {
-        debugShapes.setProjectionMatrix(camera.combined);
-        debugShapes.setColor(0.0f, 0.0f, 1.0f, 1.0f);
-        debugShapes.begin(ShapeType.Line);
-        debugShapes.line(world.getPlayer().getHitboxFrontRight().x * PX_PER_M, world.getPlayer().getHitboxFrontRight().y * PX_PER_M, world.getPlayer().getHitboxBackRight().x * PX_PER_M, world.getPlayer().getHitboxBackRight().y * PX_PER_M);
-        debugShapes.line(world.getPlayer().getHitboxBackRight().x * PX_PER_M, world.getPlayer().getHitboxBackRight().y * PX_PER_M, world.getPlayer().getHitboxBackLeft().x * PX_PER_M, world.getPlayer().getHitboxBackLeft().y * PX_PER_M);
-        debugShapes.line(world.getPlayer().getHitboxBackLeft().x * PX_PER_M, world.getPlayer().getHitboxBackLeft().y * PX_PER_M, world.getPlayer().getHitboxFrontLeft().x * PX_PER_M, world.getPlayer().getHitboxFrontLeft().y * PX_PER_M);
-        debugShapes.line(world.getPlayer().getHitboxFrontLeft().x * PX_PER_M, world.getPlayer().getHitboxFrontLeft().y * PX_PER_M, world.getPlayer().getHitboxFrontRight().x * PX_PER_M, world.getPlayer().getHitboxFrontRight().y * PX_PER_M);
-        debugShapes.end();
     }
 }

@@ -22,7 +22,7 @@ public class Door {
 	
 	public void open() {
 		state = DoorState.OPEN;
-		// TODO: auto close door after x seconds
+		// TODO: Cerrar puerta despues de x segundos
 	}
 	
 	public void unlock() {
